@@ -1,0 +1,29 @@
+extends layout
+
+block content
+    h1= title
+    p
+        b Welcome to #{title}
+    br
+    p This service allows to get access to Pandora Alarm API.
+    p
+        b Main possibilities:
+        li Get!{' '}
+            a(href='/info?user=' + user) total info
+        li Get particular field (e.g!{' '}
+            a(href='/info?id=fuel&user=' + user) fuel
+            | )
+        li: a(href='/start?user=' + user) Start engine
+        li: a(href='/stop?user=' + user) Stop engine
+    br
+    p To work with service via this page you should login voa pandora alarm user credentials
+
+    form(method='POST' action='')
+        div.in
+            label(for='email') Email:
+            input#email.form-control(type='email', placeholder='name@email.com' name='email')
+        div.in
+            label(for='pw') Password:
+            input#pw.form-control(type='password' name='password')
+        button.btn.btn-primary(type='submit') Log in
+    br
