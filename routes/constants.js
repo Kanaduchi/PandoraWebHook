@@ -23,7 +23,37 @@ module.exports.actions = [
         }
     },
     {
-        id: -2,
+        id: -1,
+        name: 'voltage',
+        type: 'info',
+        response: {
+            'default': 'Voltage is',
+            'en-us': 'Voltage is',
+            'ru-RU': 'Напряжение на аккумуляторе'
+        },
+        suffix: {
+            'default': 'volts',
+            'en-us': 'volts',
+            'ru-RU': 'вольт'
+        }
+    },
+    {
+        id: -1,
+        name: 'cabin_temp',
+        type: 'info',
+        response: {
+            'default': 'Temperature inside is',
+            'en-us': 'Temperature inside is',
+            'ru-RU': 'Температура внутри'
+        },
+        suffix: {
+            'default': 'degrees',
+            'en-us': 'degrees',
+            'ru-RU': 'градусов'
+        }
+    },
+    {
+        id: -1,
         name: 'fuel',
         type: 'info',
         response: {
