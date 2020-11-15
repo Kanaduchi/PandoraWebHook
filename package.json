@@ -1,18 +1,18 @@
 {
   "name": "pandorawebhook",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "body-parser": "~1.19.0",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
-    "express": "~4.16.4",
+    "express": "~4.17.1",
     "http-errors": "^1.7.1",
-    "body-parser": "~1.18.3",
-    "morgan": "~1.9.1",
-    "npm": "^6.8.0",
-    "pug": "^2.0.3",
+    "morgan": "~1.10.0",
+    "npm": "^7.0.11",
+    "pug": "^3.0.0",
     "q": "~1.5.1"
   }
 }

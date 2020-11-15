@@ -4,7 +4,7 @@ let router = express.Router();
 let constants = require('./constants');
 
 let https = require('https');
-let Q = require("q");
+let Q = require('q');
 
 let querystring = require('querystring');
 
@@ -36,7 +36,7 @@ function getSessionId(user) {
         });
         res.on('end', function () {
             let obj = JSON.parse(parsed);
-            if (obj.hasOwnProperty("error_text")) {
+            if (obj.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: obj.error_text
                 });
@@ -79,7 +79,7 @@ function getCarId(object) {
         });
         res.on('end', function () {
             const car = JSON.parse(parsed);
-            if (car.hasOwnProperty("error_text")) {
+            if (car.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: car.error_text
                 });
@@ -127,7 +127,7 @@ function sendCommand(object) {
         });
         res.on('end', function () {
             let obj = JSON.parse(parsed);
-            if (obj.hasOwnProperty("error_text")) {
+            if (obj.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: obj.error_text
                 });
@@ -176,11 +176,11 @@ function getParams(object, item) {
             parsed += d.toString();
         });
         res.on('end', function () {
-            if (item == "summary") {
+            if (item === 'summary') {
                 defer.resolve(parsed);
             } else {
                 let obj = JSON.parse(parsed);
-                if (obj.hasOwnProperty("error_text")) {
+                if (obj.hasOwnProperty('error_text')) {
                     defer.reject({
                         error: obj.error_text
                     });
@@ -190,7 +190,7 @@ function getParams(object, item) {
                         let value = obj['stats'][car][item];
                         defer.resolve(value);
                     } else {
-                        defer.resolve("Unknown property: " + item);
+                        defer.resolve('Unknown property: ' + item);
                     }
                 }
             }
@@ -214,18 +214,18 @@ function checkEngineStart(object, count = 0) {
 
     count = count || 0;
 
-    if (!object.show){
-        console.log("No need to wait for result");
+    if (!object.show) {
+        console.log('No need to wait for result');
         defer.resolve(Object.assign(object, {rpm: -100}));
     }
 
     if (count > 10) {
-        console.log("Wait too much time. Value is set to 200");
+        console.log('Wait too much time. Value is set to 200');
         defer.resolve(Object.assign(object, {rpm: -100}));
     }
 
-    if (object.type != 4) {
-        console.log("No need to wait for engine rpm");
+    if (object.type !== 4) {
+        console.log('No need to wait for engine rpm');
         defer.resolve(Object.assign(object, {rpm: -100}));
     }
 
@@ -250,7 +250,7 @@ function checkEngineStart(object, count = 0) {
         });
         res.on('end', function () {
             let obj = JSON.parse(parsed);
-            if (obj.hasOwnProperty("error_text")) {
+            if (obj.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: obj.error_text
                 });
@@ -260,7 +260,7 @@ function checkEngineStart(object, count = 0) {
                     let value = obj['stats'][car]['engine_rpm'];
                     defer.resolve(Object.assign(object, {rpm: value}));
                 } else {
-                    defer.resolve("Some error");
+                    defer.resolve('Some error');
                 }
             }
         });
@@ -276,7 +276,7 @@ function checkEngineStart(object, count = 0) {
     reqs.end();
 
     return defer.promise.then(function (response) {
-        return response.rpm == 0 ?
+        return response.rpm === 0 ?
             sleep(2000).then(function () {
                 return checkEngineStart(response, count + 1)
             })
@@ -291,65 +291,144 @@ function finish(object) {
 }
 
 function sleep(milliseconds) {
-    var defer = Q.defer();
+    let defer = Q.defer();
     setTimeout(function () {
         defer.resolve();
     }, milliseconds);
     return defer.promise;
 }
 
+function generateReport(type, speechText, text, endSession) {
+    if (type === 'yandex') {
+        return {
+            'response': [
+                {
+                    'tts': speechText,
+                    'end_session': endSession,
+                    'text': text
+                }
+            ]
+        }
+    }
+    if (type === 'google') {
+        return {
+            'fulfillmentText': speechText,
+            'fulfillmentMessages': [
+                {
+                    'text': {
+                        'text': [text]
+                    }
+                }
+            ],
+            'source': 'pandora alarm'
+        };
+    }
+}
+
+function getLanguage(type, requestBody) {
+    if (type === 'yandex') {
+        return {
+            'response': [
+                {
+                    'tts': speechText,
+                    'end_session': endSession,
+                    'text': text
+                }
+            ]
+        }
+    }
+    if (type === 'google') {
+        return {
+            'fulfillmentText': speechText,
+            'fulfillmentMessages': [
+                {
+                    'text': {
+                        'text': [text]
+                    }
+                }
+            ],
+            'source': 'pandora alarm'
+        };
+    }
+}
+
 router.post('/', function (req, res, next) {
+
+    let assistantType;
 
     //Check user
     if (req.query.user == null) {
-        next(createError("User is not specified"));
+        next(createError('User is not specified'));
     }
-
     let userObject = Buffer.from(req.query.user, 'base64').toString('ascii').split(':');
 
+    //Check type
+    if (req.query.type == null || req.query.type === 'google') {
+        assistantType = 'google';
+    }
+    if (req.query.type === 'yandex') {
+        assistantType = 'yandex';
+    }
+
     //Parse request body
-    //If action contains in the list
-    let request = constants.actions.filter(el => el.name === req.body['queryResult']['action']);
+    let action;
+    let request;
+    let waitEngineStart = false;
+    let lang;
 
-    //Check language
-    let lang = request.filter(l => l.response.hasOwnProperty(req.body['queryResult']['languageCode'])).length == 1
-        ? req.body['queryResult']['languageCode'] : "default";
+    if (assistantType === 'yandex') {
+        action = Object.keys(req.body['request']['nlu']['intents'])[0];
+        action = action !== undefined ? action : action = 'greeting';
+        request = constants.actions.filter(el => el.name === action);
+        lang = request.filter(l => l.response.hasOwnProperty(req.body['meta']['locale'])).length === 1
+            ? req.body['meta']['locale'] : 'default';
 
-    if (request[0]['id'] != "undefined") {
+        if (action !== 'greeting' && req.body['request']['nlu']['intents'][action]['slots']['optionalParameter'] !== undefined) {
+            waitEngineStart = (req.body['request']['nlu']['intents'][action]['slots']['optionalParameter'].value === 'true');
+        }
+    }
 
+    if (assistantType === 'google') {
+        action = req.body['queryResult']['action'];
+        action = action !== undefined ? action : action = 'greeting';
+        request = constants.actions.filter(el => el.name === action);
+        lang = request.filter(l => l.response.hasOwnProperty(req.body['queryResult']['languageCode'])).length === 1
+            ? req.body['queryResult']['languageCode'] : 'default';
+        if (action !== 'greeting' && req.body['queryResult']['parameters']['optionalParameter'] !== undefined) {
+            waitEngineStart = (req.body['queryResult']['parameters']['optionalParameter'] === 'true');
+        }
+    }
+
+    if (action === 'greeting') {
+        let responseObj = generateReport(assistantType,
+            request[0]['response'][lang],
+            request[0]['response'][lang],
+            false);
+        return res.json(responseObj);
+    }
+
+    if (request[0] !== undefined) {
         //Need to check info or command
-        if (request[0]['type'] == "info") {
-
+        if (request[0]['type'] === 'info') {
             getSessionId(userObject)
                 .then(getCarId)
                 .then(function (value) {
-                    return getParams(value, req.body['queryResult']['action'])
+                    return getParams(value, action)
                 })
                 .then(function (value) {
-                        let responseObj = {
-                            "fulfillmentText": request[0]['response'][lang] + ' ' + value + ' ' + request[0]['suffix'][lang]
-                            , "fulfillmentMessages": [
-                                {
-                                    "text": {
-                                        "text": [
-                                            request[0]['response'][lang] + ' ' + value + ' ' + request[0]['suffix'][lang]
-                                        ]
-                                    }
-                                }
-                            ]
-                            , "source": "pandora alarm"
-                        };
-                    return res.json(responseObj);
+                        let responseObj = generateReport(assistantType,
+                            request[0]['response'][lang] + ' ' + value + ' ' + request[0]['suffix'][lang],
+                            request[0]['response'][lang] + ' ' + value + ' ' + request[0]['suffix'][lang],
+                            false);
+                        return res.json(responseObj);
                     }
                 ).catch(function onError(error) {
                 next(createError(error.error));
             });
 
 
-        } else if (request[0]['type'] == "command") {
-            let show = req.body['queryResult']['parameters'].hasOwnProperty('show')
-            && req.body['queryResult']['parameters']['show'] == "true" ? true : false;
-            let type = {type: request[0]['id'], show: show};
+        } else if (request[0]['type'] === 'command') {
+            let type = {type: request[0]['id'], waitEngineStart: waitEngineStart};
             getSessionId(Object.assign(userObject, type))
                 .then(getCarId)
                 .then(sendCommand)
@@ -358,37 +437,16 @@ router.post('/', function (req, res, next) {
                         const car = JSON.parse(value.data);
                         if (car.hasOwnProperty('action_result') && car['action_result'].hasOwnProperty(value.carId)) {
                             let response = request[0]['response'][lang];
-                            if (request[0]['id'] == 4 && req.body['queryResult']['parameters'].hasOwnProperty('show') && req.body['queryResult']['parameters']['show'] == "true") {
+                            if (request[0]['id'] === 4 && type.waitEngineStart) {
                                 response = request[0]['response'][lang] + ': ' + value.rpm + ' ' + request[0]['suffix'][lang];
                             }
-                            let responseObj = {
-                                "fulfillmentText": response
-                                , "fulfillmentMessages": [
-                                    {
-                                        "text": {
-                                            "text": [
-                                                response
-                                            ]
-                                        }
-                                    }
-                                ]
-                                , "source": "pandora alarm"
-                            };
+                            let responseObj = generateReport(assistantType, response, response, false);
                             return res.json(responseObj);
                         } else {
-                            let responseObj = {
-                                "fulfillmentText": 'Something wrong: ' + value.data
-                                , "fulfillmentMessages": [
-                                    {
-                                        "text": {
-                                            "text": [
-                                                'Something wrong: ' + value.data
-                                            ]
-                                        }
-                                    }
-                                ]
-                                , "source": "pandora alarm"
-                            };
+                            let responseObj = generateReport(assistantType,
+                                'Something wrong: ' + value.data,
+                                'Something wrong: ' + value.data,
+                                false);
                             return res.json(responseObj);
                         }
                     }
@@ -397,7 +455,11 @@ router.post('/', function (req, res, next) {
             });
         }
     } else {
-        next(createError("Request command is incorrect"));
+        let responseObj = generateReport(assistantType,
+            'Wrong command',
+            'Wrong command',
+            false);
+        return res.json(responseObj);
     }
 });
 

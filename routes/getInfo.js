@@ -2,7 +2,7 @@ let express = require('express'),
     createError = require('http-errors');
 let router = express.Router();
 let https = require('https');
-let Q = require("q");
+let Q = require('q');
 
 let querystring = require('querystring');
 
@@ -34,7 +34,7 @@ function getSessionId(user) {
         });
         res.on('end', function () {
             let obj = JSON.parse(parsed);
-            if (obj.hasOwnProperty("error_text")) {
+            if (obj.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: obj.error_text
                 });
@@ -77,7 +77,7 @@ function getCarId(session) {
         });
         res.on('end', function () {
             const car = JSON.parse(parsed);
-            if (car.hasOwnProperty("error_text")) {
+            if (car.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: car.error_text
                 });
@@ -122,11 +122,11 @@ function getParams(object, item) {
             parsed += d.toString();
         });
         res.on('end', function () {
-            if (item == "summary") {
+            if (item == 'summary') {
                 defer.resolve(parsed);
             } else {
                 let obj = JSON.parse(parsed);
-                if (obj.hasOwnProperty("error_text")) {
+                if (obj.hasOwnProperty('error_text')) {
                     defer.reject({
                         error: obj.error_text
                     });
@@ -136,7 +136,7 @@ function getParams(object, item) {
                         let value = obj['stats'][car][item];
                         defer.resolve(value);
                     } else {
-                        defer.resolve("Unknown property: " + item);
+                        defer.resolve('Unknown property: ' + item);
                     }
                 }
             }
@@ -162,10 +162,10 @@ function capitalizeFirstLetter(string) {
 router.get('/', function (req, res, next) {
     let param = req.query.id;
     if (req.query.id == null) {
-        param = "summary";
+        param = 'summary';
     }
     if (req.query.user == null) {
-        next(createError("User is not specified"));
+        next(createError('User is not specified'));
     }
     getSessionId(Buffer.from(req.query.user, 'base64').toString('ascii').split(':'))
         .then(getCarId)
@@ -174,17 +174,17 @@ router.get('/', function (req, res, next) {
         })
         .then(function (value) {
                 let responseObj = {
-                    "fulfillmentText": capitalizeFirstLetter(param) + ' info received: ' + value
-                    , "fulfillmentMessages": [
+                    'fulfillmentText': capitalizeFirstLetter(param) + ' info received: ' + value
+                    , 'fulfillmentMessages': [
                         {
-                            "text": {
-                                "text": [
+                            'text': {
+                                'text': [
                                     capitalizeFirstLetter(param) + ' info received: ' + value
                                 ]
                             }
                         }
                     ]
-                    , "source": "pandora alarm"
+                    , 'source': 'pandora alarm'
                 };
                 return res.json(responseObj);
             }

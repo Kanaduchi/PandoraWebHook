@@ -1,151 +1,159 @@
 module.exports.actions = [
     {
-        id: -1,
-        name: "out_temp",
-        type: "info",
+        name: 'greeting',
         response: {
-            "default": "Temperature outside is",
-            "en-us": "Temperature outside is",
-            "ru": "Температура снаружи"
+            'default': 'Welcome to the car application',
+            'en-us': 'Welcome to the car application',
+            'ru-RU': 'Добро пожаловать в меню управления машиной'
+        }
+    },
+    {
+        id: -1,
+        name: 'out_temp',
+        type: 'info',
+        response: {
+            'default': 'Temperature outside is',
+            'en-us': 'Temperature outside is',
+            'ru-RU': 'Температура снаружи'
         },
         suffix: {
-            "default": "degrees",
-            "en-us": "degrees",
-            "ru": "градусов"
+            'default': 'degrees',
+            'en-us': 'degrees',
+            'ru-RU': 'градусов'
         }
     },
     {
         id: -2,
-        name: "fuel",
-        type: "info",
+        name: 'fuel',
+        type: 'info',
         response: {
-            "default": "Fuel level is",
-            "en-us": "Fuel level is",
-            "ru": "Остаток топлива"
+            'default': 'Fuel level is',
+            'en-us': 'Fuel level is',
+            'ru-RU': 'Остаток топлива'
         },
         suffix: {
-            "default": "liters",
-            "en-us": "liters",
-            "ru": "литров"
+            'default': 'liters',
+            'en-us': 'liters',
+            'ru-RU': 'литров'
         }
     },
     {
         id: 4,
-        name: "start",
-        type: "command",
+        name: 'start',
+        type: 'command',
         response: {
-            "default": "Engine has been started",
-            "en-us": "Engine has been started",
-            "ru": "Машина заведена"
+            'default': 'Engine has been started',
+            'en-us': 'Engine has been started',
+            'ru-RU': 'Машина заведена'
         },
         suffix: {
-            "default": "RPM",
-            "en-us": "RPM",
-            "ru": "оборотов"
+            'default': 'RPM',
+            'en-us': 'RPM',
+            'ru-RU': 'оборотов'
         }
     },
     {
         id: 8,
-        name: "stop",
-        type: "command",
+        name: 'stop',
+        type: 'command',
         response: {
-            "default": "Engine has been stopped",
-            "en-us": "Engine has been stopped",
-            "ru": "Двигатель остановлен"
+            'default': 'Engine has been stopped',
+            'en-us': 'Engine has been stopped',
+            'ru-RU': 'Двигатель остановлен'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 2,
-        name: "open",
-        type: "command",
+        name: 'open',
+        type: 'command',
         response: {
-            "default": "Car has been opened",
-            "en-us": "Car has been opened",
-            "ru": "Машина открыта"
+            'default': 'Car has been opened',
+            'en-us': 'Car has been opened',
+            'ru-RU': 'Машина открыта'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 1,
-        name: "close",
-        type: "command",
+        name: 'close',
+        type: 'command',
         response: {
-            "default": "Car has been closed",
-            "en-us": "Car has been closed",
-            "ru": "Машина закрыта"
+            'default': 'Car has been closed',
+            'en-us': 'Car has been closed',
+            'ru-RU': 'Машина закрыта'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 15,
-        name: "webasta start",
-        type: "command",
+        name: 'webasta start',
+        type: 'command',
         response: {
-            "default": "Webasta has been started",
-            "en-us": "Webasta has been started",
-            "ru": "Подогреватель включен"
+            'default': 'Webasta has been started',
+            'en-us': 'Webasta has been started',
+            'ru-RU': 'Подогреватель включен'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 16,
-        name: "webasta stop",
-        type: "command",
+        name: 'webasta stop',
+        type: 'command',
         response: {
-            "default": "Webasta has been stopped",
-            "en-us": "Webasta has been stopped",
-            "ru": "Подогреватель выключен"
+            'default': 'Webasta has been stopped',
+            'en-us': 'Webasta has been stopped',
+            'ru-RU': 'Подогреватель выключен'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 23,
-        name: "backdoor",
-        type: "command",
+        name: 'backdoor',
+        type: 'command',
         response: {
-            "default": "Tailgate has been opened",
-            "en-us": "Tailgate has been opened",
-            "ru": "Дверь багажника открыта"
+            'default': 'Tailgate has been opened',
+            'en-us': 'Tailgate has been opened',
+            'ru-RU': 'Дверь багажника открыта'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 18,
-        name: "light",
-        type: "command",
+        name: 'light',
+        type: 'command',
         response: {
-            "default": "Lights is on",
-            "en-us": "Lights is on",
-            "ru": "Подстветка включена"
+            'default': 'Lights is on',
+            'en-us': 'Lights is on',
+            'ru-RU': 'Подстветка включена'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     },
     {
         id: 0xFF,
-        name: "check",
-        type: "command",
+        name: 'check',
+        type: 'command',
         response: {
-            "default": "Command CHECK",
-            "en-us": "Command CHECK",
-            "ru": "Проверка систем"
+            'default': 'Command CHECK',
+            'en-us': 'Command CHECK',
+            'ru-RU': 'Проверка систем'
         },
         suffix: {
-            "default": ""
+            'default': ''
         }
     }
 ];

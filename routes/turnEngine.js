@@ -2,7 +2,7 @@ let express = require('express'),
     createError = require('http-errors');
 
 let https = require('https');
-let Q = require("q");
+let Q = require('q');
 
 let querystring = require('querystring');
 
@@ -36,7 +36,7 @@ function getSessionId(user) {
         });
         res.on('end', function () {
             let obj = JSON.parse(parsed);
-            if (obj.hasOwnProperty("error_text")) {
+            if (obj.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: obj.error_text
                 });
@@ -82,7 +82,7 @@ function getCarId(object) {
         });
         res.on('end', function () {
             const car = JSON.parse(parsed);
-            if (car.hasOwnProperty("error_text")) {
+            if (car.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: car.error_text
                 });
@@ -130,7 +130,7 @@ function turnEngine(object) {
         });
         res.on('end', function () {
             let obj = JSON.parse(parsed);
-            if (obj.hasOwnProperty("error_text")) {
+            if (obj.hasOwnProperty('error_text')) {
                 defer.reject({
                     error: obj.error_text
                 });
@@ -158,13 +158,13 @@ function turnEngine(object) {
 
 router.get('/', function (req, res, next) {
     if (req.query.user == null) {
-        next(createError("User is not specified"));
+        next(createError('User is not specified'));
     }
     let userObject = Buffer.from(req.query.user, 'base64').toString('ascii').split(':');
 
-    let type = {type: 4, text: "Start engine"};
+    let type = {type: 4, text: 'Start engine'};
     if (req.baseUrl == '/stop') {
-        type = {type: 8, text: "Stop engine"};
+        type = {type: 8, text: 'Stop engine'};
     }
     Object.assign(userObject, type);
 
