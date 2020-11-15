@@ -301,13 +301,12 @@ function sleep(milliseconds) {
 function generateReport(type, speechText, text, endSession) {
     if (type === 'yandex') {
         return {
-            'response': [
+            'response':
                 {
                     'tts': speechText,
                     'end_session': endSession,
                     'text': text
                 }
-            ]
         }
     }
     if (type === 'google') {
